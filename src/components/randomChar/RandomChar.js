@@ -7,10 +7,7 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 class RandomChar extends Component {
-    constructor(props) {
-        super(props);
-        this.updateChar();
-    }
+    
     state = {
         char: {},
         loading: true,
@@ -19,10 +16,25 @@ class RandomChar extends Component {
     
     marvelService = new MarvelService();
 
+    componentDidMount() {
+        this.updateChar();
+        // this.timerId = setInterval(this.updateChar, 3000);
+    };
+
+    componentWillUnmount() {
+        // clearInterval(this.timerId);
+    };
+
     onCharLoaded = (char) => {
         this.setState({
             char,
             loading: false
+        })
+    }
+
+    onCharLoading = () => {
+        this.setState({
+            loading: true
         })
     }
 
@@ -35,9 +47,8 @@ class RandomChar extends Component {
 
     updateChar = () => {
         const id = Math.floor(Math.random() * (1011400-1011000) + 1011000);
+        this.onCharLoading();
         this.marvelService
-        // .getAllCharacters()
-        // .then(res => console.log(res))
             .getCharacter(id)
             .then(this.onCharLoaded)
             .catch(this.onError);
@@ -63,7 +74,7 @@ class RandomChar extends Component {
                         Or choose another one
                     </p>
                     <button className="button button__main">
-                        <div className="inner">try it</div>
+                        <div className="inner" onClick={this.updateChar} >try it</div>
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
                 </div>
@@ -74,10 +85,12 @@ class RandomChar extends Component {
 
 const View = ({char}) => {
     const {name, description, thumbnail, homepage, wiki} = char;
-
+    const imgStyle =
+        thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg' ?
+        {"objectFit": "unset"} : {"objectFit": "cover"};
     return (
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className="randomchar__img"/>
+            <img src={thumbnail} style={imgStyle} alt="Random character" className="randomchar__img"/>
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">

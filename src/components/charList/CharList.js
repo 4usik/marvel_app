@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import MarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
@@ -60,15 +62,23 @@ class CharList extends Component {
     }
 
     renderItems(arr) {
-        const items = arr.map(item => {
+        const items = arr.map((item, i) => {
             let imgStyle = item.thumbnail ===
             'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg' ?
             {'objectFit': "unset"} : {'objectFit': "cover"};
-
+            
             return(
                 <li
-                    className="char__item"
+                    className={this.props.charId === item.id ?
+                        "char__item char__item_selected" :
+                        "char__item"}
+                    tabindex={i+1}
                     key={item.id}
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === "Enter") {
+                            this.props.onCharSelected(item.id)
+                        }
+                    }}
                     onClick={() => this.props.onCharSelected(item.id)}>
                         <img src={item.thumbnail} style={imgStyle} alt={item.name} />
                         <div className="char__name">{item.name}</div>
@@ -110,6 +120,10 @@ class CharList extends Component {
             </div>
         )
     }
+}
+
+CharList.propTypes = {
+    onCharSelected: PropTypes.func.isRequired
 }
 
 export default CharList;

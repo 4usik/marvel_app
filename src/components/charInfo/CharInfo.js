@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/MarvelService';
@@ -81,9 +82,12 @@ const View = ({char}) => {
             <ul className="char__comics-list">
                 {
                     renderComics.map((item, i) => {
+                        const comicURL = item.resourceURI.replace(/http:\/\/gateway.marvel.com\/v1\/public/, "");
                         return (
                             <li key={i} className="char__comics-item">
-                                {item.name}
+                                <Link to={comicURL}>
+                                    {item.name}
+                                </Link>
                             </li>
                         )
                     })
